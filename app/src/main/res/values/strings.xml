@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">LiteBarometer</string>
+    <string name="now_barometer">Current barometric pressure</string>
+    <string name="barometer_share">Share barometric pressure</string>
+    <string name="db_clear">Delete history</string>
+    <string name="barometer_history">Barometric history</string>
+    <string name="delete_history_mes">Are you sure you want to delete all history?</string>
+</resources>

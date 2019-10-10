@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">気圧計Lite</string>
+    <string name="now_barometer">現在の気圧</string>
+    <string name="barometer_share">気圧を共有</string>
+    <string name="db_clear">履歴削除</string>
+    <string name="barometer_history">気圧の履歴</string>
+    <string name="delete_history_mes">履歴を全削除してよろしいですか？</string>
+</resources>

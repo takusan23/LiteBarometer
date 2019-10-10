@@ -5,4 +5,6 @@
     <string name="db_clear">Delete history</string>
     <string name="barometer_history">Barometric history</string>
     <string name="delete_history_mes">Are you sure you want to delete all history?</string>
+    <string name="appwidget_text">EXAMPLE</string>
+    <string name="add_widget">Add widget</string>
 </resources>

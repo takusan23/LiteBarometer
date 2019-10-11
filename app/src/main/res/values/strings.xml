@@ -7,4 +7,15 @@
     <string name="delete_history_mes">Are you sure you want to delete all history?</string>
     <string name="appwidget_text">EXAMPLE</string>
     <string name="add_widget">Add widget</string>
+    <string name="graph_menu">Graph</string>
+    <string name="licence">Licence</string>
+    <string name="kono_app">About this app</string>
+    <string name="notification">Background pressure acquisition service</string>
+    <string name="notification_desc">The barometric pressure is acquired in the background.</string>
+    <string name="start_service">Start service</string>
+    <string name="stop_service">End service</string>
+    <string name="service_description">By using this service, you can collect barometric pressure at regular intervals even when the app is not running.</string>
+    <string name="service_time">Interval to get(Minutes)</string>
+    <string name="save_button">Save settings</string>
+    <string name="background">Background</string>
 </resources>

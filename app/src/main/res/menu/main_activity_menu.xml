@@ -8,4 +8,13 @@
         android:id="@+id/main_activity_menu_barometer_history"
         android:icon="@drawable/ic_history_black_24dp"
         android:title="@string/barometer_history" />
+    <item
+        android:id="@+id/main_activity_menu_background_service"
+        android:icon="@drawable/ic_timer_black_24dp"
+        android:title="@string/background" />
+    <item
+        android:visible="false"
+        android:id="@+id/main_activity_menu_graph"
+        android:icon="@drawable/ic_timeline_black_24dp"
+        android:title="@string/graph_menu" />
 </menu>

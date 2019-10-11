@@ -32,10 +32,10 @@ public class BarometerWidget extends AppWidgetProvider {
         ComponentName myWidget = new ComponentName(context, BarometerWidget.class);
         AppWidgetManager manager = AppWidgetManager.getInstance(context);
 
-       // final RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.barometer_widget);
-       // Intent buttonIntent = new Intent(context, BarometerWidget.class);
-       // PendingIntent btn1Pending = PendingIntent.getBroadcast(context, 0, buttonIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-       // views.setOnClickPendingIntent(R.id.appwidget_image_button, btn1Pending);
+        final RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.barometer_widget);
+        Intent buttonIntent = new Intent(context, BarometerWidget.class);
+        PendingIntent btn1Pending = PendingIntent.getBroadcast(context, 0, buttonIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        views.setOnClickPendingIntent(R.id.appwidget_image_button, btn1Pending);
 
         manager.updateAppWidget(myWidget, remoteViews);
 

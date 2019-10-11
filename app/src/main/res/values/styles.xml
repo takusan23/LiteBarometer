@@ -8,4 +8,12 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <style name="OLEDTheme" parent="Theme.MaterialComponents">
+        <item name="colorAccent">@color/colorPrimaryDark</item>
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="android:tint">#ffffff</item>
+        <item name="android:colorBackground">@android:color/black</item>
+        <item name="android:textColor">#ffffff</item>
+    </style>
+
 </resources>

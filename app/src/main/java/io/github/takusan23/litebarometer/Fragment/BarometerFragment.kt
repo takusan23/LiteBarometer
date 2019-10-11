@@ -19,6 +19,7 @@ import io.github.takusan23.litebarometer.R
 import kotlinx.android.synthetic.main.fragment_barometer_layout.*
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.concurrent.timerTask
 import kotlin.math.roundToInt
 
 class BarometerFragment : Fragment() {

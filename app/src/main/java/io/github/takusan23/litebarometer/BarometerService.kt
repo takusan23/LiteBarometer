@@ -36,6 +36,8 @@ class BarometerService : Service() {
     lateinit var sensorManager: SensorManager
     lateinit var sensorEventListener: SensorEventListener
 
+    lateinit var timerTask: TimerTask
+
     override fun onBind(p0: Intent?): IBinder? {
         return null
     }
@@ -81,12 +83,18 @@ class BarometerService : Service() {
         return START_NOT_STICKY
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        timerTask.cancel()
+    }
+
     private fun backgroundBarometer() {
         //定期的に動かす
         val interval = pref_setting.getInt("interval", 60)
-        Timer().schedule(timerTask {
+        timerTask = timerTask {
             barometer()
-        }, 0, oneMinuteMilliSecond * interval.toLong())
+        }
+        Timer().schedule(timerTask, 0, oneMinuteMilliSecond * interval.toLong())
     }
 
     private fun initDB() {

@@ -1,5 +1,8 @@
 package io.github.takusan23.litebarometer
 
+import android.app.PendingIntent
+import android.appwidget.AppWidgetManager
+import android.content.ComponentName
 import android.content.Intent
 import android.content.res.Configuration
 import android.graphics.Color
@@ -8,11 +11,13 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.RemoteViews
 import io.github.takusan23.litebarometer.Activity.KonoAppActivity
 import io.github.takusan23.litebarometer.Activity.LicenceActivity
 import io.github.takusan23.litebarometer.Fragment.BackgroundServiceFragment
 import io.github.takusan23.litebarometer.Fragment.BarometerFragment
 import io.github.takusan23.litebarometer.Fragment.BarometerListFragment
+import io.github.takusan23.litebarometer.Fragment.OfflineWeatherFragment
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
@@ -62,7 +67,18 @@ class MainActivity : AppCompatActivity() {
                 R.id.main_activity_menu_background_service -> {
                     supportActionBar?.title = getString(R.string.background)
                     val trans = supportFragmentManager.beginTransaction()
-                    trans.replace(R.id.main_activity_fragment_linearlayout, BackgroundServiceFragment())
+                    trans.replace(
+                        R.id.main_activity_fragment_linearlayout,
+                        BackgroundServiceFragment()
+                    )
+                    trans.commit()
+                }
+                R.id.main_activity_menu_offline_weather->{
+                    val trans = supportFragmentManager.beginTransaction()
+                    trans.replace(
+                        R.id.main_activity_fragment_linearlayout,
+                        OfflineWeatherFragment()
+                    )
                     trans.commit()
                 }
                 R.id.main_activity_menu_graph -> {

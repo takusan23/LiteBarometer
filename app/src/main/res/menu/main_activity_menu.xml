@@ -5,6 +5,10 @@
         android:icon="@drawable/ic_search_black_24dp"
         android:title="@string/now_barometer" />
     <item
+        android:id="@+id/main_activity_menu_offline_weather"
+        android:icon="@drawable/ic_timer_black_24dp"
+        android:title="@string/offline_weather" />
+    <item
         android:id="@+id/main_activity_menu_barometer_history"
         android:icon="@drawable/ic_history_black_24dp"
         android:title="@string/barometer_history" />

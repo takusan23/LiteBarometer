@@ -18,4 +18,6 @@
     <string name="service_time">Interval to get(Minutes)</string>
     <string name="save_button">Save settings</string>
     <string name="background">Background</string>
+    <string name="kaimen_hosei_kiatsu">"Sea level correction pressure "</string>
+    <string name="offline_weather">Offline weather</string>
 </resources>

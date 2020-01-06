@@ -6,7 +6,7 @@
         android:title="@string/now_barometer" />
     <item
         android:id="@+id/main_activity_menu_offline_weather"
-        android:icon="@drawable/ic_timer_black_24dp"
+        android:icon="@drawable/ic_weather_sun"
         android:title="@string/offline_weather" />
     <item
         android:id="@+id/main_activity_menu_barometer_history"

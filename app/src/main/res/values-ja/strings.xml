@@ -18,4 +18,7 @@
     <string name="background">バックグラウンド</string>
     <string name="kaimen_hosei_kiatsu">海面更正気圧</string>
     <string name="offline_weather">オフライン天気</string>
+    <string name="weather">天気</string>
+    <string name="weather_sun">晴れ</string>
+    <string name="weather_rain">雨</string>
 </resources>

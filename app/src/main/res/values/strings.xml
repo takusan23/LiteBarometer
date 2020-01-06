@@ -20,4 +20,7 @@
     <string name="background">Background</string>
     <string name="kaimen_hosei_kiatsu">"Sea level correction pressure "</string>
     <string name="offline_weather">Offline weather</string>
+    <string name="weather">Weather</string>
+    <string name="weather_sun">Sunny</string>
+    <string name="weather_rain">rain</string>
 </resources>

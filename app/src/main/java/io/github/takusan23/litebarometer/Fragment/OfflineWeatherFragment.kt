@@ -140,7 +140,21 @@ class OfflineWeatherFragment : Fragment() {
                             altitude = location.altitude
 
                             //海面更正気圧計算
-                            fragment_offline_weather_kaimen_hosei_kiatsu_textview.text  = "${calcPressure().roundToInt()} hPa"
+
+                            val calcPressure = calcPressure()
+
+                            fragment_offline_weather_kaimen_hosei_kiatsu_textview.text  = "${calcPressure.roundToInt()} hPa"
+
+                            if(1013<=calcPressure){
+                                //1013より高かったら晴れ
+                                fragment_offline__weather_imageview.setImageDrawable(context?.getDrawable(R.drawable.ic_weather_sun))
+                                fragment_offline__weather_textview.text = getString(R.string.weather_sun)
+                            }else{
+                                //低かったらあめ？
+                                fragment_offline__weather_imageview.setImageDrawable(context?.getDrawable(R.drawable.ic_weather_rain))
+                                fragment_offline__weather_textview.text = getString(R.string.weather_rain)
+                            }
+
 
                         }
                     }

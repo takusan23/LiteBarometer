@@ -15,8 +15,8 @@ class KonoAppActivity : AppCompatActivity() {
 
     var isDarkMode = false
 
-    val version = "1.1.0"
-    val create = "2019/10/12"
+    val version = "2.0.0"
+    val create = "2020/01/08"
 
     /*
     *

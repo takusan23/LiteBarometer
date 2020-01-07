@@ -74,6 +74,7 @@ class MainActivity : AppCompatActivity() {
                     trans.commit()
                 }
                 R.id.main_activity_menu_offline_weather->{
+                    supportActionBar?.title = getString(R.string.offline_weather)
                     val trans = supportFragmentManager.beginTransaction()
                     trans.replace(
                         R.id.main_activity_fragment_linearlayout,

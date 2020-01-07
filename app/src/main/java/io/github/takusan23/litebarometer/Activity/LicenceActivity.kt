@@ -51,6 +51,12 @@ material-components/material-components-android
 material-components/material-components-android is licensed under the
 
 Apache License 2.0
+
+----------------
+        
+天気アイコンに以下のサイトの素材を利用しました。
+
+https://icooon-mono.com/
         
         """.trimIndent()
 

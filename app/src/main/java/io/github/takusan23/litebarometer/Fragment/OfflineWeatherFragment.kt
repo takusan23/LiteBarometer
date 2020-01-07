@@ -48,7 +48,7 @@ class OfflineWeatherFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         //現在位置の取得（高度取得）に位置情報の権限が必要なのでリクエスト
-        requestPermission()
+        // requestPermission()
 
         //気圧取得
         getBarometricPressure()
@@ -72,6 +72,29 @@ class OfflineWeatherFragment : Fragment() {
                 if (event?.sensor?.type == Sensor.TYPE_PRESSURE) {
                     //気圧計の値
                     pressure = event.values[0]
+
+                    fragment_offline_weather_textview.text = "${pressure.roundToInt()} hPa"
+
+                    if (1013 <= pressure) {
+                        //1013より高かったら晴れ
+                        fragment_offline__weather_imageview.setImageDrawable(
+                            context?.getDrawable(
+                                R.drawable.ic_weather_sun
+                            )
+                        )
+                        fragment_offline__weather_textview.text =
+                            getString(R.string.weather_sun)
+                    } else {
+                        //低かったらあめ？
+                        fragment_offline__weather_imageview.setImageDrawable(
+                            context?.getDrawable(
+                                R.drawable.ic_weather_rain
+                            )
+                        )
+                        fragment_offline__weather_textview.text =
+                            getString(R.string.weather_rain)
+                    }
+
                 }
             }
         }
@@ -143,16 +166,27 @@ class OfflineWeatherFragment : Fragment() {
 
                             val calcPressure = calcPressure()
 
-                            fragment_offline_weather_kaimen_hosei_kiatsu_textview.text  = "${calcPressure.roundToInt()} hPa"
+                            fragment_offline_weather_kaimen_hosei_kiatsu_textview.text =
+                                "${calcPressure.roundToInt()} hPa"
 
-                            if(1013<=calcPressure){
+                            if (1013 <= calcPressure) {
                                 //1013より高かったら晴れ
-                                fragment_offline__weather_imageview.setImageDrawable(context?.getDrawable(R.drawable.ic_weather_sun))
-                                fragment_offline__weather_textview.text = getString(R.string.weather_sun)
-                            }else{
+                                fragment_offline__weather_imageview.setImageDrawable(
+                                    context?.getDrawable(
+                                        R.drawable.ic_weather_sun
+                                    )
+                                )
+                                fragment_offline__weather_textview.text =
+                                    getString(R.string.weather_sun)
+                            } else {
                                 //低かったらあめ？
-                                fragment_offline__weather_imageview.setImageDrawable(context?.getDrawable(R.drawable.ic_weather_rain))
-                                fragment_offline__weather_textview.text = getString(R.string.weather_rain)
+                                fragment_offline__weather_imageview.setImageDrawable(
+                                    context?.getDrawable(
+                                        R.drawable.ic_weather_rain
+                                    )
+                                )
+                                fragment_offline__weather_textview.text =
+                                    getString(R.string.weather_rain)
                             }
 
 
@@ -191,7 +225,20 @@ class OfflineWeatherFragment : Fragment() {
 
     fun getAverageTemp(): Float {
         val calender = Calendar.getInstance()
-        val list = arrayListOf<Float>(5.6f,7.2f,10.6f,13.6f,20.0f,21.8f,24.1f,28.4f,25.1f,19.4f,13.1f,8.5f)
+        val list = arrayListOf<Float>(
+            5.6f,
+            7.2f,
+            10.6f,
+            13.6f,
+            20.0f,
+            21.8f,
+            24.1f,
+            28.4f,
+            25.1f,
+            19.4f,
+            13.1f,
+            8.5f
+        )
         val month = calender.get(Calendar.MONTH)
         return list[month]
     }

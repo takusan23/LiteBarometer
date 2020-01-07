@@ -14,11 +14,12 @@
     <string name="stop_service">サービスを終了</string>
     <string name="service_description">このサービスを利用すると、アプリを起動していなくても一定間隔で気圧を収集できます。</string>
     <string name="service_time">取得する間隔（分）</string>
-    <string name="save_button">設定を保存</string>
+    <string name="save_button">なお、現在の高度に影響します（海面更正気圧は計算していません。）</string>
     <string name="background">バックグラウンド</string>
     <string name="kaimen_hosei_kiatsu">海面更正気圧</string>
     <string name="offline_weather">オフライン天気</string>
     <string name="weather">天気</string>
     <string name="weather_sun">晴れ</string>
     <string name="weather_rain">雨</string>
+    <string name="offline_weather_descriotion">この値は今の気圧から雑に判断しています。 なお、現在の高度に影響します（海面更正気圧は計算していません。）</string>
 </resources>

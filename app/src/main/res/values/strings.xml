@@ -23,4 +23,5 @@
     <string name="weather">Weather</string>
     <string name="weather_sun">Sunny</string>
     <string name="weather_rain">rain</string>
+    <string name="offline_weather_descriotion">This value is roughly determined from the current barometric pressure. In addition, it affects the current altitude (sea level correction pressure is not calculated.)</string>
 </resources>

@@ -27,27 +27,17 @@ public class BarometerWidget extends AppWidgetProvider {
 
     int[] ids;
 
-    static void updateAppWidget(Context context, RemoteViews remoteViews) {
+    static void updateAppWidget(Context context) {
 
         ComponentName myWidget = new ComponentName(context, BarometerWidget.class);
         AppWidgetManager manager = AppWidgetManager.getInstance(context);
 
         final RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.barometer_widget);
         Intent buttonIntent = new Intent(context, BarometerWidget.class);
-        PendingIntent btn1Pending = PendingIntent.getBroadcast(context, 0, buttonIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent btn1Pending = PendingIntent.getBroadcast(context, 111, buttonIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         views.setOnClickPendingIntent(R.id.appwidget_image_button, btn1Pending);
 
-        manager.updateAppWidget(myWidget, remoteViews);
-
-/*
-        CharSequence widgetText = "気圧計";
-        // Construct the RemoteViews object
-        RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.barometer_widget);
-        views.setTextViewText(R.id.appwidget_text, widgetText);
-
-        // Instruct the widget manager to update the widget
-        appWidgetManager.updateAppWidget(appWidgetId, views);
-*/
+        manager.updateAppWidget(myWidget, views);
     }
 
     @Override
@@ -84,11 +74,15 @@ public class BarometerWidget extends AppWidgetProvider {
             public void onSensorChanged(SensorEvent sensorEvent) {
                 int barometer = Math.round(sensorEvent.values[0]);
                 float barometerFloat = sensorEvent.values[0];
-                String text = barometer + " hPa" + "\n" + "(" + barometerFloat + " hPa" + ")";
+                String text = barometer + " hPa" + "\n" + "(" + String.format("%.3f",barometerFloat) + " hPa" + ")";
                 views.setTextViewText(R.id.appwidget_text, text);
                 //更新
-                updateAppWidget(context, views);
-
+                ComponentName myWidget = new ComponentName(context, BarometerWidget.class);
+                AppWidgetManager manager = AppWidgetManager.getInstance(context);
+                int[] ids = manager.getAppWidgetIds(myWidget);
+                for (int id : ids) {
+                    manager.updateAppWidget(id, views);
+                }
                 //登録解除
                 sensorManager.unregisterListener(sensorEventListener);
             }

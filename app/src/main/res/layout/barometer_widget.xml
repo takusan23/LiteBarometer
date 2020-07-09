@@ -1,5 +1,5 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@drawable/widget_background"
     android:orientation="horizontal"
@@ -9,9 +9,9 @@
         android:id="@+id/appwidget_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_weight="1"
         android:gravity="center"
-        android:padding="10dp"
-        android:textColor="#ffffff"
+        android:padding="5dp"
         android:text="気圧ウィジェット"
         android:textSize="20sp" />
 
@@ -19,8 +19,8 @@
         android:id="@+id/appwidget_image_button"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:tint="#ffffff"
         android:backgroundTint="#00FFFFFF"
-        android:src="@drawable/ic_refresh_black_24dp" />
+        android:src="@drawable/ic_refresh_black_24dp"
+        android:tint="#ffffff" />
 
 </LinearLayout>

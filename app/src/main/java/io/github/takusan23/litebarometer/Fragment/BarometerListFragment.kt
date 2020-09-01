@@ -3,12 +3,17 @@ package io.github.takusan23.litebarometer.Fragment
 import android.database.sqlite.SQLiteDatabase
 import android.graphics.Color
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.room.Room
+import androidx.room.migration.Migration
+import androidx.sqlite.db.SupportSQLiteDatabase
 import com.github.mikephil.charting.components.Description
 import com.github.mikephil.charting.components.YAxis
 import com.github.mikephil.charting.data.Entry
@@ -21,19 +26,18 @@ import io.github.takusan23.litebarometer.BarometerRecyclerViewAdapter
 import io.github.takusan23.litebarometer.Database.BarometerSQLiteHelper
 import io.github.takusan23.litebarometer.MainActivity
 import io.github.takusan23.litebarometer.R
+import io.github.takusan23.litebarometer.RoomDB.Database.BarometerDB
 import kotlinx.android.synthetic.main.fragment_barometer_list.*
+import kotlin.concurrent.thread
 
 class BarometerListFragment : Fragment() {
 
     lateinit var adapter: BarometerRecyclerViewAdapter
     val recyclerViewList = arrayListOf<ArrayList<String>>()
 
-    //データベース
-    lateinit var sqLiteDatabase: SQLiteDatabase
-    lateinit var barometerSQLiteHelper: BarometerSQLiteHelper
-
     var color = Color.BLACK
 
+    lateinit var barometerDB: BarometerDB
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -71,158 +75,145 @@ class BarometerListFragment : Fragment() {
     }
 
     private fun initLineChart() {
-        history_linechart.data = getLineChart()
-        //グラフの説明。右下に出る
-        val description = Description()
-        description.text = getString(R.string.barometer_history)
-        description.textColor = color
-        history_linechart.description = description
-        //ハイライト機能
-        history_linechart.setOnChartValueSelectedListener(object : OnChartValueSelectedListener {
-            override fun onNothingSelected() {
+        getLineChart {
+            history_linechart.data = it
+            Handler(Looper.getMainLooper()).post {
+                //グラフの説明。右下に出る
+                val description = Description()
+                description.text = getString(R.string.barometer_history)
+                description.textColor = color
+                history_linechart.description = description
+                history_linechart.invalidate() // 更新
+                //ハイライト機能
+                history_linechart.setOnChartValueSelectedListener(object :
+                    OnChartValueSelectedListener {
+                    override fun onNothingSelected() {
 
-            }
+                    }
 
-            override fun onValueSelected(e: Entry?, h: Highlight?) {
-                //選択時
-                val selectValue = (e?.y).toString()
-                //選択したときの内容をRecyclerViewに入れる
-                recyclerViewList.clear()
-                adapter.notifyDataSetChanged()
-                selectLoadDB(selectValue)
+                    override fun onValueSelected(e: Entry?, h: Highlight?) {
+                        //選択時
+                        val selectValue = (e?.y).toString()
+                        //選択したときの内容をRecyclerViewに入れる
+                        recyclerViewList.clear()
+                        adapter.notifyDataSetChanged()
+                        selectLoadDB(selectValue)
+                    }
+                })
             }
-        })
+        }
     }
 
-    fun getLineChart(): LineData {
-        val item = mutableListOf<Entry>()
-
-        //DB
-        val cursor =
-            sqLiteDatabase.query(
-                "barometer_db",
-                arrayOf("value_float", "unix"),
-                null,
-                null,
-                null,
-                null,
-                null
-            )
-
-        cursor.moveToFirst()
-        for (i in 0 until cursor.count) {
-            //横軸
-            val y = i.toFloat()
-            //縦軸は気圧
-            val pos = cursor.getString(0).toFloat()
-            item.add(Entry(y, pos))
-            cursor.moveToNext()
-        }
-        cursor.close()
-
-        //線の色とかはダークモード有効時に見えなくなるので
-        if (activity is MainActivity) {
-            if ((activity as MainActivity).isDarkMode) {
-                color = Color.WHITE
-                //一緒にグラフの縦（左右）の軸のテキストの色
-                val rightLine = history_linechart.axisLeft
-                rightLine.textColor = color
-                val leftLine = history_linechart.axisRight
-                leftLine.textColor = color
-                //このグラフが何を指してるのか表示するラベルの色
-                val upLine = history_linechart.legend
-                upLine.textColor = color
-                //横軸？
-                val xLine = history_linechart.xAxis
-                xLine.textColor = color
+    fun getLineChart(response: (LineData) -> Unit) {
+        thread {
+            val item = mutableListOf<Entry>()
+            //DB
+            val dbItemList = barometerDB.barometerDBDao().getAll()
+            for (i in dbItemList.indices) {
+                //横軸
+                val y = i.toFloat()
+                //縦軸は気圧
+                val pos = dbItemList[i].valueFloat!!.toFloat()
+                item.add(Entry(y, pos))
             }
-        }
-
-        val line = LineDataSet(item, getString(R.string.barometer_history)).apply {
-            axisDependency = YAxis.AxisDependency.LEFT
-            //ダークモードのときだけ青のほうがかっこよかった
+            //線の色とかはダークモード有効時に見えなくなるので
             if (activity is MainActivity) {
                 if ((activity as MainActivity).isDarkMode) {
-                    color = color
-                } else {
-                    color = Color.BLACK
+                    color = Color.WHITE
+                    //一緒にグラフの縦（左右）の軸のテキストの色
+                    val rightLine = history_linechart.axisLeft
+                    rightLine.textColor = color
+                    val leftLine = history_linechart.axisRight
+                    leftLine.textColor = color
+                    //このグラフが何を指してるのか表示するラベルの色
+                    val upLine = history_linechart.legend
+                    upLine.textColor = color
+                    //横軸？
+                    val xLine = history_linechart.xAxis
+                    xLine.textColor = color
                 }
             }
-            highLightColor = Color.RED
-            setDrawCircles(false)
-            setDrawCircleHole(false)
-            setDrawValues(false)
-            lineWidth = 2f
-        }
 
-        val data = LineData(line)
-        data.setValueTextColor(Color.BLACK)
-        data.setValueTextSize(9f)
-        return data
+            val line = LineDataSet(item, getString(R.string.barometer_history)).apply {
+                axisDependency = YAxis.AxisDependency.LEFT
+                //ダークモードのときだけ青のほうがかっこよかった
+                if (activity is MainActivity) {
+                    if ((activity as MainActivity).isDarkMode) {
+                        color = color
+                    } else {
+                        color = Color.BLACK
+                    }
+                }
+                highLightColor = Color.RED
+                setDrawCircles(false)
+                setDrawCircleHole(false)
+                setDrawValues(false)
+                lineWidth = 2f
+            }
+
+            val data = LineData(line)
+            data.setValueTextColor(Color.BLACK)
+            data.setValueTextSize(9f)
+            response(data)
+        }
     }
 
 
     private fun deleteDB() {
         //全削除
-        sqLiteDatabase.delete("barometer_db", null, null)
-        adapter.notifyDataSetChanged()
+        thread {
+            val dao = barometerDB.barometerDBDao()
+            dao.getAll().forEach {
+                dao.delete(it)
+            }
+            activity?.runOnUiThread {
+                adapter.notifyDataSetChanged()
+            }
+        }
     }
 
     private fun initDB() {
-        if (!this@BarometerListFragment::barometerSQLiteHelper.isInitialized && context != null) {
+        if (!this@BarometerListFragment::barometerDB.isInitialized && context != null) {
             //初期化してないときはいる
-            barometerSQLiteHelper = BarometerSQLiteHelper(context!!)
-            sqLiteDatabase = barometerSQLiteHelper.writableDatabase
-            barometerSQLiteHelper.setWriteAheadLoggingEnabled(false)
+            barometerDB = Room.databaseBuilder(context!!, BarometerDB::class.java, "Barometer.db")
+                .addMigrations(object : Migration(1, 2) {
+                    override fun migrate(database: SupportSQLiteDatabase) {
+                        // 特に何もしなくていいらしい。
+                    }
+                }).build()
         }
     }
 
     fun loadDB() {
-        val cursor = sqLiteDatabase.query(
-            "barometer_db",
-            arrayOf("create_at", "value", "value_float"),
-            null,
-            null,
-            null,
-            null,
-            null
-        )
-        cursor.moveToFirst()
-        for (i in 0 until cursor.count) {
-            val item = arrayListOf<String>()
-            item.add("")
-            item.add(cursor.getString(0))
-            item.add(cursor.getString(1))
-            item.add(cursor.getString(2))
-            recyclerViewList.add(0, item)
-            cursor.moveToNext()
+        thread {
+            barometerDB.barometerDBDao().getAll().forEach { data ->
+                val item = arrayListOf<String>()
+                item.add("")
+                item.add(data.createAt!!)
+                item.add(data.value!!)
+                item.add(data.valueFloat!!)
+                recyclerViewList.add(0, item)
+            }
+            activity?.runOnUiThread {
+                adapter.notifyDataSetChanged()
+            }
         }
-        cursor.close()
-        adapter.notifyDataSetChanged()
     }
 
     fun selectLoadDB(value: String) {
-        val cursor = sqLiteDatabase.query(
-            "barometer_db",
-            arrayOf("create_at", "value", "value_float"),
-            "value_float=?",  //選択条件。?にその下の配列の内容が入る
-            arrayOf(value), //検索中身
-            null,
-            null,
-            null
-        )
-        cursor.moveToFirst()
-        for (i in 0 until cursor.count) {
-            val item = arrayListOf<String>()
-            item.add("")
-            item.add(cursor.getString(0))
-            item.add(cursor.getString(1))
-            item.add(cursor.getString(2))
-            recyclerViewList.add(0, item)
-            cursor.moveToNext()
+        thread {
+            barometerDB.barometerDBDao().find(value).forEach { data ->
+                val item = arrayListOf<String>()
+                item.add("")
+                item.add(data.createAt!!)
+                item.add(data.value!!)
+                item.add(data.valueFloat!!)
+                recyclerViewList.add(0, item)
+            }
+            activity?.runOnUiThread {
+                adapter.notifyDataSetChanged()
+            }
         }
-        cursor.close()
-        adapter.notifyDataSetChanged()
     }
 
 

@@ -52,7 +52,7 @@ public class BarometerWidget extends AppWidgetProvider {
 
             //更新ボタン
             Intent buttonIntent = new Intent(context, BarometerWidget.class);
-            PendingIntent btn1Pending = PendingIntent.getBroadcast(context, 0, buttonIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+            PendingIntent btn1Pending = PendingIntent.getBroadcast(context, 2525, buttonIntent, PendingIntent.FLAG_UPDATE_CURRENT);
             views.setOnClickPendingIntent(R.id.appwidget_image_button, btn1Pending);
             appWidgetManager.updateAppWidget(appWidgetId, views);
         }
@@ -69,13 +69,18 @@ public class BarometerWidget extends AppWidgetProvider {
 
         sensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
         List<Sensor> sensorList = sensorManager.getSensorList(Sensor.TYPE_PRESSURE);
+        SensorEventListener sensorEventListener;
         sensorEventListener = new SensorEventListener() {
             @Override
             public void onSensorChanged(SensorEvent sensorEvent) {
                 int barometer = Math.round(sensorEvent.values[0]);
                 float barometerFloat = sensorEvent.values[0];
-                String text = barometer + " hPa" + "\n" + "(" + String.format("%.3f",barometerFloat) + " hPa" + ")";
+                String text = barometer + " hPa" + "\n" + "(" + String.format("%.3f", barometerFloat) + " hPa" + ")";
                 views.setTextViewText(R.id.appwidget_text, text);
+                //一応更新ボタンも再セットしておく
+                Intent buttonIntent = new Intent(context, BarometerWidget.class);
+                PendingIntent btn1Pending = PendingIntent.getBroadcast(context, 4545, buttonIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+                views.setOnClickPendingIntent(R.id.appwidget_image_button, btn1Pending);
                 //更新
                 ComponentName myWidget = new ComponentName(context, BarometerWidget.class);
                 AppWidgetManager manager = AppWidgetManager.getInstance(context);
@@ -84,7 +89,7 @@ public class BarometerWidget extends AppWidgetProvider {
                     manager.updateAppWidget(id, views);
                 }
                 //登録解除
-                sensorManager.unregisterListener(sensorEventListener);
+                sensorManager.unregisterListener(this);
             }
 
             @Override
@@ -92,11 +97,7 @@ public class BarometerWidget extends AppWidgetProvider {
 
             }
         };
-        sensorManager.registerListener(
-                sensorEventListener,
-                sensorList.get(0),
-                SensorManager.SENSOR_DELAY_NORMAL
-        );
+        sensorManager.registerListener(sensorEventListener, sensorList.get(0), SensorManager.SENSOR_DELAY_NORMAL);
 
     }
 

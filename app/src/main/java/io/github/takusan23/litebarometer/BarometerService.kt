@@ -16,10 +16,16 @@ import android.hardware.SensorManager
 import android.os.Build
 import android.os.IBinder
 import androidx.preference.PreferenceManager
+import androidx.room.Room
+import androidx.room.migration.Migration
+import androidx.sqlite.db.SupportSQLiteDatabase
 import io.github.takusan23.litebarometer.Database.BarometerSQLiteHelper
+import io.github.takusan23.litebarometer.RoomDB.Database.BarometerDB
+import io.github.takusan23.litebarometer.RoomDB.Entity.BarometerDBEntity
 import kotlinx.android.synthetic.main.fragment_barometer_layout.*
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.concurrent.thread
 import kotlin.concurrent.timerTask
 import kotlin.math.roundToInt
 
@@ -29,8 +35,14 @@ class BarometerService : Service() {
     lateinit var pref_setting: SharedPreferences
 
     //データベース
-    lateinit var sqLiteDatabase: SQLiteDatabase
-    lateinit var barometerSQLiteHelper: BarometerSQLiteHelper
+    val barometerDB: BarometerDB by lazy {
+        Room.databaseBuilder(this, BarometerDB::class.java, "Barometer.db")
+            .addMigrations(object : Migration(1, 2) {
+                override fun migrate(database: SupportSQLiteDatabase) {
+                    // 何もしなくていいらしい。
+                }
+            }).build()
+    }
 
     //センサー
     lateinit var sensorManager: SensorManager
@@ -76,9 +88,7 @@ class BarometerService : Service() {
             notificationManager.notify(1, notification)
         }
 
-        initDB()
         backgroundBarometer()
-
 
         return START_NOT_STICKY
     }
@@ -95,15 +105,6 @@ class BarometerService : Service() {
             barometer()
         }
         Timer().schedule(timerTask, 0, oneMinuteMilliSecond * interval.toLong())
-    }
-
-    private fun initDB() {
-        if (!this@BarometerService::barometerSQLiteHelper.isInitialized) {
-            //初期化してないときはいる
-            barometerSQLiteHelper = BarometerSQLiteHelper(this)
-            sqLiteDatabase = barometerSQLiteHelper.writableDatabase
-            barometerSQLiteHelper.setWriteAheadLoggingEnabled(false)
-        }
     }
 
     fun barometer() {
@@ -137,15 +138,19 @@ class BarometerService : Service() {
 
     //データベースに追加する
     private fun insertDB(barometer: Int, barometer_long: Float) {
-        val simpleDateFormat = SimpleDateFormat("MM/dd HH:mm:ss:SSS")
-        val calender = Calendar.getInstance()
-        val contentValues = ContentValues()
-        contentValues.put("setting", "")//将来使う？
-        contentValues.put("value", barometer.toString())
-        contentValues.put("value_float", barometer_long.toString())
-        contentValues.put("create_at", simpleDateFormat.format(calender.time))
-        contentValues.put("unix", (System.currentTimeMillis() / 1000L).toString())
-        sqLiteDatabase.insert("barometer_db", null, contentValues)
+        thread {
+            val simpleDateFormat = SimpleDateFormat("MM/dd HH:mm:ss:SSS")
+            val calender = Calendar.getInstance()
+            // DBへ追加
+            val dbEntity = BarometerDBEntity(
+                value = barometer.toString(),
+                createAt = simpleDateFormat.format(calender.time),
+                setting = "",
+                unixTime = (System.currentTimeMillis() / 1000L).toString(),
+                valueFloat = barometer_long.toString()
+            )
+            barometerDB.barometerDBDao().insert(dbEntity)
+        }
     }
 
 }

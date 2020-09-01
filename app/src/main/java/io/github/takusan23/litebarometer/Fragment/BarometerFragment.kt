@@ -14,11 +14,17 @@ import android.view.ViewGroup
 import androidx.core.app.ShareCompat
 import androidx.core.content.getSystemService
 import androidx.fragment.app.Fragment
+import androidx.room.Room
+import androidx.room.migration.Migration
+import androidx.sqlite.db.SupportSQLiteDatabase
 import io.github.takusan23.litebarometer.Database.BarometerSQLiteHelper
 import io.github.takusan23.litebarometer.R
+import io.github.takusan23.litebarometer.RoomDB.Database.BarometerDB
+import io.github.takusan23.litebarometer.RoomDB.Entity.BarometerDBEntity
 import kotlinx.android.synthetic.main.fragment_barometer_layout.*
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.concurrent.thread
 import kotlin.concurrent.timerTask
 import kotlin.math.roundToInt
 
@@ -29,22 +35,45 @@ class BarometerFragment : Fragment() {
     lateinit var sensorEventListener: SensorEventListener
 
     //データベース
-    lateinit var sqLiteDatabase: SQLiteDatabase
-    lateinit var barometerSQLiteHelper: BarometerSQLiteHelper
+    private val barometerDB: BarometerDB by lazy {
+        Room.databaseBuilder(requireContext(), BarometerDB::class.java, "Barometer.db")
+            .addMigrations(object : Migration(2, 3) {
+                override fun migrate(database: SupportSQLiteDatabase) {
+                    // SQLite移行。移行後のデータベースを作成する
+                    database.execSQL(
+                        """
+                        CREATE TABLE barometer_db_tmp (
+                          _id INTEGER NOT NULL PRIMARY KEY, 
+                          value TEXT NOT NULL,
+                          value_float TEXT NOT NULL,
+                          create_at TEXT NOT NULL,
+                          unix TEXT NOT NULL,
+                          setting TEXT NOT NULL
+                        )
+                        """
+                    )
+                    // 移行後のデータベースへデータを移す
+                    database.execSQL(
+                        """
+                        INSERT INTO barometer_db_tmp (_id,value,value_float,create_at,unix,setting)
+                        SELECT _id, value, value_float, create_at, unix, setting FROM barometer_db
+                        """
+                    )
+                    // 前あったデータベースを消す
+                    database.execSQL("DROP TABLE barometer_db")
+                    // 移行後のデータベースの名前を移行前と同じにして移行完了
+                    database.execSQL("ALTER TABLE barometer_db_tmp RENAME TO barometer_db")
+                }
+            })
+            .build()
+    }
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_barometer_layout, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        //データベース用意
-        initDB()
 
         sensorManager = context?.getSystemService(Context.SENSOR_SERVICE) as SensorManager
         //気圧計
@@ -94,23 +123,18 @@ class BarometerFragment : Fragment() {
 
     //データベースに追加する
     private fun insertDB(barometer: Int, barometer_long: Float) {
-        val simpleDateFormat = SimpleDateFormat("MM/dd HH:mm:ss:SSS")
-        val calender = Calendar.getInstance()
-        val contentValues = ContentValues()
-        contentValues.put("setting", "")//将来使う？
-        contentValues.put("value", barometer.toString())
-        contentValues.put("value_float", barometer_long.toString())
-        contentValues.put("create_at", simpleDateFormat.format(calender.time))
-        contentValues.put("unix", (System.currentTimeMillis() / 1000L).toString())
-        sqLiteDatabase.insert("barometer_db", null, contentValues)
-    }
-
-    private fun initDB() {
-        if (!this@BarometerFragment::barometerSQLiteHelper.isInitialized && context != null) {
-            //初期化してないときはいる
-            barometerSQLiteHelper = BarometerSQLiteHelper(context!!)
-            sqLiteDatabase = barometerSQLiteHelper.writableDatabase
-            barometerSQLiteHelper.setWriteAheadLoggingEnabled(false)
+        thread {
+            val simpleDateFormat = SimpleDateFormat("MM/dd HH:mm:ss:SSS")
+            val calender = Calendar.getInstance()
+            // DBへ追加
+            val dbEntity = BarometerDBEntity(
+                value = barometer.toString(),
+                createAt = simpleDateFormat.format(calender.time),
+                setting = "",
+                unixTime = (System.currentTimeMillis() / 1000L).toString(),
+                valueFloat = barometer_long.toString()
+            )
+            barometerDB.barometerDBDao().insert(dbEntity)
         }
     }
 

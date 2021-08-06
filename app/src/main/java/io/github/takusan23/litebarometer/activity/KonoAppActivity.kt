@@ -1,4 +1,4 @@
-package io.github.takusan23.litebarometer.Activity
+package io.github.takusan23.litebarometer.activity
 
 import android.content.Intent
 import android.content.res.Configuration
@@ -6,7 +6,6 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.view.View
 import androidx.core.net.toUri
 import io.github.takusan23.litebarometer.R
 import kotlinx.android.synthetic.main.activity_kono_app.*

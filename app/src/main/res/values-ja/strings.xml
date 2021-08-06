@@ -22,4 +22,6 @@
     <string name="weather_sun">晴れ</string>
     <string name="weather_rain">雨</string>
     <string name="offline_weather_descriotion">この値は今の気圧から雑に判断しています。 なお、現在の高度に影響します（海面更正気圧は計算していません。）</string>
+    <string name="barometer_widget_update_service_name">気圧計ウィジェット更新サービス</string>
+    <string name="barometer_widget_update_service_working">気圧計ウィジェット更新中...</string>
 </resources>

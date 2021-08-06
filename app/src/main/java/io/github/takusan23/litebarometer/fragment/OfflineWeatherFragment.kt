@@ -1,4 +1,4 @@
-package io.github.takusan23.litebarometer.Fragment
+package io.github.takusan23.litebarometer.fragment
 
 import android.Manifest
 import android.content.Context
@@ -109,16 +109,16 @@ class OfflineWeatherFragment : Fragment() {
 
     private fun requestPermission() {
         if (ActivityCompat.checkSelfPermission(
-                context!!,
+                requireContext(),
                 android.Manifest.permission.ACCESS_FINE_LOCATION
             ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-                context!!,
+                requireContext(),
                 android.Manifest.permission.ACCESS_COARSE_LOCATION
             ) != PackageManager.PERMISSION_GRANTED
         ) {
             //権限ないとき
             ActivityCompat.requestPermissions(
-                activity!!,
+                requireActivity(),
                 arrayOf(
                     android.Manifest.permission.ACCESS_FINE_LOCATION,
                     android.Manifest.permission.ACCESS_COARSE_LOCATION
@@ -156,6 +156,7 @@ class OfflineWeatherFragment : Fragment() {
             val criteria = Criteria()
             criteria.accuracy = Criteria.ACCURACY_FINE
 
+/*
             locationManager.requestLocationUpdates(
                 LocationManager.GPS_PROVIDER, 100, 10f, object : LocationListener {
                     override fun onLocationChanged(location: Location?) {
@@ -205,6 +206,7 @@ class OfflineWeatherFragment : Fragment() {
 
                     }
                 })
+*/
         }
     }
 

@@ -1,6 +1,5 @@
-package io.github.takusan23.litebarometer.Fragment
+package io.github.takusan23.litebarometer.fragment
 
-import android.database.sqlite.SQLiteDatabase
 import android.graphics.Color
 import android.os.Bundle
 import android.os.Handler
@@ -8,7 +7,6 @@ import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.room.Room
@@ -23,10 +21,9 @@ import com.github.mikephil.charting.highlight.Highlight
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener
 import com.google.android.material.snackbar.Snackbar
 import io.github.takusan23.litebarometer.BarometerRecyclerViewAdapter
-import io.github.takusan23.litebarometer.Database.BarometerSQLiteHelper
 import io.github.takusan23.litebarometer.MainActivity
 import io.github.takusan23.litebarometer.R
-import io.github.takusan23.litebarometer.RoomDB.Database.BarometerDB
+import io.github.takusan23.litebarometer.room.database.BarometerDB
 import kotlinx.android.synthetic.main.fragment_barometer_list.*
 import kotlin.concurrent.thread
 
@@ -37,7 +34,7 @@ class BarometerListFragment : Fragment() {
 
     var color = Color.BLACK
 
-    lateinit var barometerDB: BarometerDB
+    private val barometerDB by lazy { BarometerDB.getInstance(requireContext()) }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -58,7 +55,6 @@ class BarometerListFragment : Fragment() {
         fragment_barometer_list_recyclerview.adapter = adapter
 
         //データベース読み込み
-        initDB()
         loadDB()
 
         fragment_barometer_delete_button.setOnClickListener {
@@ -169,18 +165,6 @@ class BarometerListFragment : Fragment() {
             activity?.runOnUiThread {
                 adapter.notifyDataSetChanged()
             }
-        }
-    }
-
-    private fun initDB() {
-        if (!this@BarometerListFragment::barometerDB.isInitialized && context != null) {
-            //初期化してないときはいる
-            barometerDB = Room.databaseBuilder(context!!, BarometerDB::class.java, "Barometer.db")
-                .addMigrations(object : Migration(1, 2) {
-                    override fun migrate(database: SupportSQLiteDatabase) {
-                        // 特に何もしなくていいらしい。
-                    }
-                }).build()
         }
     }
 

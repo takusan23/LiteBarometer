@@ -1,14 +1,12 @@
-package io.github.takusan23.litebarometer
+package io.github.takusan23.litebarometer.service
 
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.Service
-import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
-import android.database.sqlite.SQLiteDatabase
 import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
@@ -19,10 +17,9 @@ import androidx.preference.PreferenceManager
 import androidx.room.Room
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
-import io.github.takusan23.litebarometer.Database.BarometerSQLiteHelper
-import io.github.takusan23.litebarometer.RoomDB.Database.BarometerDB
-import io.github.takusan23.litebarometer.RoomDB.Entity.BarometerDBEntity
-import kotlinx.android.synthetic.main.fragment_barometer_layout.*
+import io.github.takusan23.litebarometer.R
+import io.github.takusan23.litebarometer.room.database.BarometerDB
+import io.github.takusan23.litebarometer.room.entity.BarometerDBEntity
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.concurrent.thread
@@ -35,15 +32,7 @@ class BarometerService : Service() {
     lateinit var pref_setting: SharedPreferences
 
     //データベース
-    val barometerDB: BarometerDB by lazy {
-        Room.databaseBuilder(this, BarometerDB::class.java, "Barometer.db")
-            .addMigrations(object : Migration(1, 2) {
-                override fun migrate(database: SupportSQLiteDatabase) {
-                    // 何もしなくていいらしい。
-                }
-            }).build()
-    }
-
+    private val barometerDB by lazy { BarometerDB.getInstance(this) }
     //センサー
     lateinit var sensorManager: SensorManager
     lateinit var sensorEventListener: SensorEventListener

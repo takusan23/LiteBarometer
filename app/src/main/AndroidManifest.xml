@@ -2,10 +2,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="io.github.takusan23.litebarometer">
 
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
     <application
         android:allowBackup="true"
@@ -14,8 +14,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".Activity.KonoAppActivity"></activity>
-        <activity android:name=".Activity.LicenceActivity" />
+
+        <activity android:name=".activity.KonoAppActivity" />
+
+        <activity android:name=".activity.LicenceActivity" />
 
         <receiver android:name=".BarometerWidget">
             <intent-filter>
@@ -35,7 +37,8 @@
             </intent-filter>
         </activity>
 
-        <service android:name=".BarometerService" />
+        <service android:name=".service.BarometerService" />
+        <service android:name=".service.BarometerWidgetUpdateForegroundService" />
 
     </application>
 

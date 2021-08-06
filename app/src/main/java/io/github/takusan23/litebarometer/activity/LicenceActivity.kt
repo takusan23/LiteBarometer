@@ -1,4 +1,4 @@
-package io.github.takusan23.litebarometer.Activity
+package io.github.takusan23.litebarometer.activity
 
 import android.content.res.Configuration
 import android.graphics.Color

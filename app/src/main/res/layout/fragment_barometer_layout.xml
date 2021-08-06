@@ -20,8 +20,9 @@
             <TextView
                 android:id="@+id/baromter_textview"
                 android:layout_width="match_parent"
-                android:gravity="center"
                 android:layout_height="wrap_content"
+                android:maxLines="2"
+                android:gravity="center"
                 android:text=""
                 android:textSize="50sp" />
         </LinearLayout>
@@ -33,8 +34,8 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|center"
         android:layout_margin="40sp"
-        app:backgroundTint="@color/colorAccent"
         android:foregroundTint="#ffffff"
+        app:backgroundTint="@color/colorAccent"
         app:srcCompat="@drawable/ic_share_black_24dp" />
 
 </FrameLayout>

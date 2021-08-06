@@ -1,4 +1,4 @@
-package io.github.takusan23.litebarometer.RoomDB.Entity
+package io.github.takusan23.litebarometer.room.entity
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity

@@ -1,7 +1,7 @@
-package io.github.takusan23.litebarometer.RoomDB.Dao
+package io.github.takusan23.litebarometer.room.dao
 
 import androidx.room.*
-import io.github.takusan23.litebarometer.RoomDB.Entity.BarometerDBEntity
+import io.github.takusan23.litebarometer.room.entity.BarometerDBEntity
 
 @Dao
 interface BarometerDBDao {

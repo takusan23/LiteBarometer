@@ -1,6 +1,7 @@
 package io.github.takusan23.litebarometer.activity
 
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
@@ -12,10 +13,10 @@ import kotlinx.android.synthetic.main.activity_kono_app.*
 
 class KonoAppActivity : AppCompatActivity() {
 
-    var isDarkMode = false
+    private var isDarkMode = false
 
-    val version = "2.0.0"
-    val create = "2020/01/08"
+    private val version by lazy { packageManager.getPackageInfo(packageName, PackageManager.GET_META_DATA).versionName }
+    private val updateAt = "2021/08/08"
 
     /*
     *
@@ -23,9 +24,9 @@ class KonoAppActivity : AppCompatActivity() {
     *
     * */
 
-    val twitterLink = "https://twitter.com/takusan__23"
-    val mastodonLink = "https://best-friends.chat/web/accounts/20498"
-    val githubLink = "https://github.com/takusan23/LiteBarometer"
+    private val twitterLink = "https://twitter.com/takusan__23"
+    private val mastodonLink = "https://best-friends.chat/web/accounts/20498"
+    private val githubLink = "https://github.com/takusan23/LiteBarometer"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,7 +50,7 @@ class KonoAppActivity : AppCompatActivity() {
         supportActionBar?.title = getString(R.string.kono_app)
 
         kono_app_ver_textview.text = version
-        kono_app_create_textview.text = "$create"
+        kono_app_create_textview.text = "$updateAt"
 
         kono_app_twitter.setOnClickListener {
             val intent = Intent(Intent.ACTION_VIEW, twitterLink.toUri())
@@ -66,7 +67,7 @@ class KonoAppActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
-        if (isDarkMode){
+        if (isDarkMode) {
             supportActionBar?.setBackgroundDrawable(ColorDrawable(Color.parseColor("#000000")))
         }
 

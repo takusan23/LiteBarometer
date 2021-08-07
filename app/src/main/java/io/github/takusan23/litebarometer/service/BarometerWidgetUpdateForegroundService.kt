@@ -13,7 +13,9 @@ import android.os.Build
 import android.os.IBinder
 import android.widget.RemoteViews
 import androidx.preference.PreferenceManager
+import io.github.takusan23.litebarometer.BarometerWeatherWidget
 import io.github.takusan23.litebarometer.BarometerWidget
+import io.github.takusan23.litebarometer.MainActivity
 import io.github.takusan23.litebarometer.R
 
 /**
@@ -63,7 +65,7 @@ class BarometerWidgetUpdateForegroundService : Service() {
 
     /** ウイジェット更新 */
     private fun updateWidget() {
-        val views = RemoteViews(packageName, R.layout.barometer_widget)
+        val context = this@BarometerWidgetUpdateForegroundService
         val sensorManager = getSystemService(SENSOR_SERVICE) as SensorManager
         val sensorList: List<Sensor> = sensorManager.getSensorList(Sensor.TYPE_PRESSURE)
         val sensorEventListener: SensorEventListener
@@ -71,26 +73,18 @@ class BarometerWidgetUpdateForegroundService : Service() {
             override fun onSensorChanged(sensorEvent: SensorEvent) {
                 val barometer = Math.round(sensorEvent.values[0])
                 val barometerFloat = sensorEvent.values[0]
-                val text = """
+
+                val barometerWidgetText = """
                     $barometer hPa
                     (${String.format("%.3f", barometerFloat)} hPa)
                     """.trimIndent()
-                views.setTextViewText(R.id.appwidget_text, text)
-                //一応更新ボタンも再セットしておく
-                val buttonIntent = Intent(this@BarometerWidgetUpdateForegroundService, BarometerWidgetUpdateForegroundService::class.java)
-                val servicePendingIntent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    PendingIntent.getForegroundService(this@BarometerWidgetUpdateForegroundService, 2525, buttonIntent, PendingIntent.FLAG_UPDATE_CURRENT)
-                } else {
-                    PendingIntent.getService(this@BarometerWidgetUpdateForegroundService, 2525, buttonIntent, PendingIntent.FLAG_UPDATE_CURRENT)
-                }
-                views.setOnClickPendingIntent(R.id.appwidget_image_button, servicePendingIntent)
-                //更新
-                val myWidget = ComponentName(this@BarometerWidgetUpdateForegroundService, BarometerWidget::class.java)
-                val manager = AppWidgetManager.getInstance(this@BarometerWidgetUpdateForegroundService)
-                val ids = manager.getAppWidgetIds(myWidget)
-                for (id in ids) {
-                    manager.updateAppWidget(id, views)
-                }
+                val weatherWidgetText = "$barometer hPa"
+                val weatherIcon = if (barometer >= 1013) R.drawable.ic_weather_sun else R.drawable.ic_weather_rain
+
+                // ウィジェット更新
+                BarometerWidget.updateWidget(context, barometerWidgetText)
+                BarometerWeatherWidget.updateAppWidget(context, weatherIcon, weatherWidgetText)
+
                 //登録解除
                 sensorManager.unregisterListener(this)
                 // サービス終了

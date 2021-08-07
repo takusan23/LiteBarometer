@@ -3,7 +3,6 @@
     package="io.github.takusan23.litebarometer">
 
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
-
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
@@ -16,10 +15,23 @@
         android:theme="@style/AppTheme">
 
         <activity android:name=".activity.KonoAppActivity" />
-
         <activity android:name=".activity.LicenceActivity" />
 
-        <receiver android:name=".BarometerWidget">
+        <receiver
+            android:name=".BarometerWeatherWidget"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/barometer_weather_widget_info" />
+        </receiver>
+
+        <receiver
+            android:name=".BarometerWidget"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
@@ -39,7 +51,6 @@
 
         <service android:name=".service.BarometerService" />
         <service android:name=".service.BarometerWidgetUpdateForegroundService" />
-
     </application>
 
 </manifest>

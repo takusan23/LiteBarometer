@@ -1,5 +1,5 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/appwidget_parent"
+    android:id="@+id/appwidget_weather_parent"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@drawable/widget_background"
@@ -9,19 +9,28 @@
     android:orientation="horizontal"
     android:padding="@dimen/widget_margin">
 
+    <ImageView
+        android:id="@+id/appwidget_weather_icon_imageview"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_weight="2"
+        android:padding="5dp"
+        android:src="@drawable/ic_weather_sun"
+        android:tint="#ffffff" />
+
     <TextView
-        android:id="@+id/appwidget_text"
+        android:id="@+id/appwidget_weather_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:gravity="center"
+        android:maxLines="1"
         android:padding="5dp"
-        android:maxLines="2"
         android:text="気圧ウィジェット"
         android:textSize="20sp" />
 
     <ImageView
-        android:id="@+id/appwidget_image_button"
+        android:id="@+id/appwidget_weather_image_button"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:clickable="true"
@@ -30,5 +39,4 @@
         android:padding="5dp"
         android:src="@drawable/ic_refresh_black_24dp"
         android:tint="#ffffff" />
-
 </LinearLayout>

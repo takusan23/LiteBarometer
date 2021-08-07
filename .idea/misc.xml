@@ -3,6 +3,11 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/takusan23/Desktop/Dev/Android/LiteBarometer/app/src/main/res/drawable-v21/app_widget_background.xml" value="0.20208333333333334" />
+        <entry key="..\:/Users/takusan23/Desktop/Dev/Android/LiteBarometer/app/src/main/res/drawable-v21/app_widget_inner_view_background.xml" value="0.20208333333333334" />
+        <entry key="..\:/Users/takusan23/Desktop/Dev/Android/LiteBarometer/app/src/main/res/drawable/widget_background.xml" value="0.20208333333333334" />
+        <entry key="..\:/Users/takusan23/Desktop/Dev/Android/LiteBarometer/app/src/main/res/layout/adapter_barometer_layout.xml" value="0.10371376811594203" />
+        <entry key="..\:/Users/takusan23/Desktop/Dev/Android/LiteBarometer/app/src/main/res/layout/barometer_weather_widget.xml" value="0.33" />
         <entry key="..\:/Users/takusan23/Desktop/Dev/Android/LiteBarometer/app/src/main/res/layout/barometer_widget.xml" value="0.10371376811594203" />
       </map>
     </option>
